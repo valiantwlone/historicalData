@@ -1,14 +1,16 @@
 import yfinance as yf
 import pandas as pd
-import requests
 import aiohttp
 import asyncio
+import csv
+import requests
+
+
 
 
 symbols = [
-    {"name": "BTC-USD", "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"},
-    {"name": "DOGE-USD", "address": "0xbA2aE424d960c26247Dd6c32edC70B295c744C43"},
-    {"name": "ETH-USD", "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"},
+    {"name": "WBTC-USD", "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"},
+    {"name": "WETH-USD", "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"},
     {"name": "LINK-USD", "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA"},
     {"name": "MATIC-USD", "address": "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0"},
     {"name": "UNI-USD", "address": "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984"},
@@ -16,8 +18,7 @@ symbols = [
     {"name": "USDT-USD", "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7"},
     {"name": "DPI-USD", "address": "0x1494CA1F11D487c2bBe4543E90080AeBa4BA3C2b"},
     {"name": "stETH-USD", "address": "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84"},
-    {"name": "LDO-USD", "address": "0x514910771AF9Ca656af840dff83E8264EcF986CA"},
-    {"name": "LTC-USD", "address": "0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32"},
+    {"name": "LDO-USD", "address": "0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32"},
     {"name": "KNC-USD", "address": "0xdeFA4e8a7bcBA345F687a2f1456F5Edd9CE97202"},
     {"name": "1INCH-USD", "address": "0x111111111117dC0aa78b770fA6A738034120C302"},
     {"name": "AAVE-USD", "address": "0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9"},
@@ -25,14 +26,13 @@ symbols = [
     {"name": "GTC-USD", "address": "0xDe30da39c46104798bB5aA3fe8B9e0e1F348163F"},
     {"name": "COMP-USD", "address": "0xc00e94Cb662C3520282E6f5717214004A7f26888"},
     {"name": "MANA-USD", "address": "0x0F5D2fB29fb7d3CFeE444a200298f468908cC942"},
-    {"name": "MAKER-USD", "address": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2"},
+    {"name": "MKR-USD", "address": "0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2"},
     {"name": "SAND-USD", "address": "0x3845badAde8e6dFF049820680d1F14bD3903a5d0"},
     {"name": "YFI-USD", "address": "0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e"},
-    {"name": "cETH-USD", "address": "0x4Ddc2D193948926D02f9B1fE9e1daa0718270ED5"},
-
-
 
 ]
+payload={}
+headers = {}
 
 # symbols = json.load(symbols)
 
@@ -42,31 +42,43 @@ end_date = '2023-03-06'
 # all_data = pd.DataFrame()
 
 
-def uploadPerformanceV2():
-    for symbol in symbols:
-        token = symbol["name"]
-        address = symbol["address"]
-        url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performanceV2'
-        filename = f'{token}.csv'
-        print(filename, url)
-
-
-def uploadPerformanceUSD():
-    for symbol in symbols:
-        token = symbol["name"]
-        address = symbol["address"]
+async def uploadPerformanceV2(filename,address):
         url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performanceUSD'
-        filename = f'{token}.csv'
-        print(filename, url)
+
+        
+        files=[('file',('file',open( fr"C:\Users\valia\Work\historicalData\{filename}",'rb' ),'application/octet-stream'))]
+
+    
+
+        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+        print(response.text)
 
 
-def uploadPerformanceLocal():
-    for symbol in symbols:
-        token = symbol["name"]
-        address = symbol["address"]
-        url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performancelocal'
-        filename = f'{token}.csv'
-        print(filename, url)
+
+
+def uploadPerformanceUSD(filename,address):
+        url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performanceUSD'
+
+        
+        files=[('file',('file',open( fr"C:\Users\valia\Work\historicalData\{filename}",'rb' ),'application/octet-stream'))]
+
+        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+        print(response.text)
+
+
+def uploadPerformanceLocal(filename,address):
+        url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performanceUSD'
+
+        
+        files=[('file',('file',open( fr"C:\Users\valia\Work\historicalData\{filename}",'rb' ),'application/octet-stream'))]
+
+    
+        response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+        print(response.text)
+
 
 
 def getHistoricalData():
@@ -99,12 +111,33 @@ def printToken():
         print(f'{symbol["name"]}-eth.csv')
 
 
-def main():
+async def main():
     getHistoricalData()
-    uploadPerformanceV2()
-    uploadPerformanceUSD()
-    uploadPerformanceLocal()
+    await upload_files()
 
 
-# printToken()
-main()
+async def upload_files():
+        
+        for symbol in symbols:
+            token = symbol["name"]
+            address = symbol["address"]
+            filename = f'{token}-eth.csv' 
+            # await uploadPerformanceUSD(filename,address)
+            # await uploadPerformanceLocal(filename,address)
+            # await uploadPerformanceUSD(filename,address)
+
+
+            print(filename,token)
+
+
+
+
+   
+loop = asyncio.get_event_loop()
+loop.run_until_complete(main())    
+
+
+
+
+
+
