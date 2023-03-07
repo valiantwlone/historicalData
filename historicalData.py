@@ -89,7 +89,12 @@ def getHistoricalData():
 
         print(data)
 
-        data.to_csv(f'{symbol["name"]}.csv', index=False)
+        data.to_csv(f'{symbol["name"]}-eth.csv', index=False)
+
+
+def printToken():
+    for symbol in symbols:
+        print(f'{symbol["name"]}-eth.csv')
 
 
 def main():
@@ -99,4 +104,5 @@ def main():
     uploadPerformanceLocal()
 
 
+# printToken()
 main()
