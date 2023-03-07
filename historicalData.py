@@ -5,9 +5,6 @@ import asyncio
 import csv
 import requests
 
-
-
-
 symbols = [
     {"name": "WBTC-USD", "address": "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599"},
     {"name": "WETH-USD", "address": "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"},
@@ -33,25 +30,14 @@ symbols = [
 ]
 payload={}
 headers = {}
-
-# symbols = json.load(symbols)
-
-
 start_date = '2021-09-01'
 end_date = '2023-03-06'
-# all_data = pd.DataFrame()
 
 
 async def uploadPerformanceV2(filename,address):
         url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performanceUSD'
-
-        
         files=[('file',('file',open( fr"C:\Users\valia\Work\historicalData\{filename}",'rb' ),'application/octet-stream'))]
-
-    
-
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
-
         print(response.text)
 
 
@@ -59,26 +45,16 @@ async def uploadPerformanceV2(filename,address):
 
 def uploadPerformanceUSD(filename,address):
         url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performanceUSD'
-
-        
         files=[('file',('file',open( fr"C:\Users\valia\Work\historicalData\{filename}",'rb' ),'application/octet-stream'))]
-
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
-
         print(response.text)
 
 
 def uploadPerformanceLocal(filename,address):
         url = f'https://us-central1-xwinstage.cloudfunctions.net/importTokenPriceHistory?contractAddress={address}&collection=performanceUSD'
-
-        
         files=[('file',('file',open( fr"C:\Users\valia\Work\historicalData\{filename}",'rb' ),'application/octet-stream'))]
-
-    
         response = requests.request("POST", url, headers=headers, data=payload, files=files)
-
         print(response.text)
-
 
 
 def getHistoricalData():
@@ -122,7 +98,7 @@ async def upload_files():
             token = symbol["name"]
             address = symbol["address"]
             filename = f'{token}-eth.csv' 
-            # await uploadPerformanceUSD(filename,address)
+            await uploadPerformanceUSD(filename,address)
             # await uploadPerformanceLocal(filename,address)
             # await uploadPerformanceUSD(filename,address)
 
